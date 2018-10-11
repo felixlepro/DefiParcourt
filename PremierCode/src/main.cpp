@@ -65,7 +65,7 @@ void tourner(float angle,float vitesse,float rayon =0)
     float parcouruExt;
     float parcouruInt;
     
-    float p = 8.5;
+    float p = 5;
     float i = 0;
     float d = 0;
 
@@ -75,7 +75,7 @@ void tourner(float angle,float vitesse,float rayon =0)
 
     float ratio = distExt/distInt;
     float ratioReel = ratio;
-    float correction;
+    float ratioCorrection = ratio;
 
     if (angle < 0)
     {
@@ -105,20 +105,21 @@ void tourner(float angle,float vitesse,float rayon =0)
         }
 
         
-        correction = 0;
-        //correction += erreur / p;
+        ratioCorrection += erreur / p;
         //correction += sommeErreur *i;
         //correction += (erreur - erreurPrec) * d;
 
-        vitesseCorriger = vitesseCorriger + correction;
+        vitesseCorriger = vitesse * ratioCorrection;
 
-        Serial.println(ratioReel);
-        Serial.println(correction);
+        //Serial.println(ratioReel);
+        Serial.println(ratioCorrection);
         MOTOR_SetSpeed(ext,vitesseCorriger);
 
         erreurPrec = erreur;
         sommeErreur += erreur;
     }
+    Serial.println(ENCODER_Read(0));
+    Serial.println(distExt);
 }
 float acceleration(float speedFinal)
 {
@@ -164,6 +165,12 @@ void stop()
     MOTOR_SetSpeed(0,0);
     MOTOR_SetSpeed(1,0);
 }
+void uTurn(float speed)
+{
+    MOTOR_SetSpeed(0,-speed);
+    MOTOR_SetSpeed(1,speed);
+    delay(930);
+}
 void setup() {
     // put your setup code here, to run once:
     BoardInit();
@@ -180,54 +187,51 @@ void loop() {
     {
 
     }
-    
-    //tourner(90,.6,.129);
+    //uTurn(0.4);
+    //tourner(180,.6,.129);
     stop();
     delay(1000);
     //stop();
     //tourner(45,.6,.129);
     // Parcourt
 
-    float speed = 0.6f;
+    float speed = 0.4f;
     float rayon = 0.129;
-    avancer(1.8-acceleration(speed),speed);
-    tourner(-86,speed,rayon);
-    avancer(0.07,speed);
-    tourner(190,speed,rayon);
+    avancer(1.9-acceleration(speed),speed);
+    tourner(-80,speed,rayon);
+    avancer(0.1,speed);
+    tourner(180,speed,rayon);
     avancer(0.05,speed);
-    tourner(-90,speed,rayon);
-    avancer(0.01,speed);
-    tourner(45,speed,rayon);
-    avancer(0.15,speed);
-    tourner(-90,speed,rayon);
-    avancer(.40,speed);
-    tourner(35,speed,rayon);
-    avancer(0.32,speed);
+    tourner(-95,speed,rayon);
+    stop();
+    tourner(37,speed,rayon);
+    avancer(0.25,speed);
+    tourner(-95,speed,rayon);
+    avancer(.50,speed);
+    tourner(30,speed,rayon);
+    avancer(0.30,speed);
     tourner(13.5,speed,rayon);
     avancer(.78,speed);
 
     // U turn
-    tourner(45,speed,rayon);
+    uTurn(speed);
     stop();
-    tourner(-290,speed,0);
-    stop();
-    tourner(45,speed,rayon);
-
+    delay(300);
     // Retour
     avancer(0.78,speed);
-    tourner(-5,speed,rayon);
+    tourner(-15,speed,rayon);
     avancer(0.30,speed);
-    tourner(-25,speed,rayon);
+    tourner(-35,speed,rayon);
     avancer(.50,speed);
-    tourner(90,speed,rayon);
-    avancer(0.18,speed);
-    tourner(-45,speed,rayon);
+    tourner(85,speed,rayon);
+    avancer(0.20,speed);
+    tourner(-50,speed,rayon);
     stop();
     tourner(80,speed,rayon);
-    avancer(0.05,speed);
+    avancer(0.15,speed);
     tourner(-180,speed,rayon);
     avancer(0.05,speed);
-    tourner(90,speed,rayon);
-    avancer(2,speed); 
+    tourner(110,speed,rayon);
+    avancer(2.5,speed); 
 }
 
